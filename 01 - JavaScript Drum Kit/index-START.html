@@ -68,7 +68,9 @@
     key.classList.add('playing');
     
     function removeTransition(e) {
-      console.log(e)
+      if(e.propertyName !== 'transform') return;
+      // console.log(this);  //입력한 keyCode와 일치하는 div 엘리먼트 출력
+      this.classList.remove('playing');
     }
     const keys = document.querySelectorAll('.key');
     keys.forEach(key => key.addEventListener('transitionend', removeTransition));
