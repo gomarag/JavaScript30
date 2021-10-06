@@ -79,9 +79,18 @@
 =======
     window.document.addEventListener('keydown', function(e) {
     const audio = document.querySelector(`audio[data-key='${e.keyCode}']`);
+    const key = document.querySelector(`.key[data-key='${e.keyCode}']`);
     if (!audio) return;
+    audio.currentTime = 0;  //rewind to start
     audio.play();
-    console.log(audio);
+
+    key.classList.add('playing');
+    
+    function removeTransition(e) {
+      console.log(e)
+    }
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => key.addEventListener('transitionend', removeTransition));
 });
 >>>>>>> 7f0f181 (add: 입력한 keyCode와 일치하는 오디오 재생)
 </script>
