@@ -58,6 +58,7 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+<<<<<<< HEAD
     function playSound(e) {
     const audio = document.querySelector(`audio[data-key='${e.keyCode}']`);
     const key = document.querySelector(`.key[data-key='${e.keyCode}']`);
@@ -75,6 +76,25 @@
     const keys = document.querySelectorAll('.key');
     keys.forEach(key => key.addEventListener('transitionend', removeTransition));
     window.document.addEventListener('keydown', playSound);
+=======
+    window.document.addEventListener('keydown', function(e) {
+    const audio = document.querySelector(`audio[data-key='${e.keyCode}']`);
+    const key = document.querySelector(`.key[data-key='${e.keyCode}']`);
+    if (!audio) return;
+    audio.currentTime = 0;  //rewind to start
+    audio.play();
+
+    key.classList.add('playing');
+    
+    function removeTransition(e) {
+      if(e.propertyName !== 'transform') return;
+      // console.log(this);  //입력한 keyCode와 일치하는 div 엘리먼트 출력
+      this.classList.remove('playing');
+    }
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+});
+>>>>>>> 7f0f181 (add: 입력한 keyCode와 일치하는 오디오 재생)
 </script>
 </body>
 </html>
