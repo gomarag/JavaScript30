@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
+  <title>Type Ahead 👀-ing</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,21 +17,45 @@
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
-const searchInput = document.querySelector('input.search');
-const suggestions = document.querySelector('ul.suggestions');
-// console.log(searchInput);  // 입력내용을 실시간으로 어떻게 반영하지?
-// console.log(suggestions);
+const cities = [];
 
-function displayInputs() {
-  return `
-    <li>
-      <span class="name">${cityName}, ${stateName}</span>
-      <span class="population">${numberWithCommas(place.population)}</span>
-    </li>
-    `;
+fetch(endpoint)
+  .then(blob => blob.json())           // { Promise }
+  // .then(data => cities.push(data))  // nested array => 0: Array(1000)
+  .then(data => cities.push(...data))  // spread into a push method
+
+function findMatches(wordToMatch, cities) {
+  return cities.filter(place => {
+    // here we need to figure out if the city or state matches what was searched
+    const regex = new RegExp(wordToMatch, 'gi');  //g: global, i: insensitive with lower case or upper case
+    return place.city.match(regex) || place.state.match(regex);
+  });
 }
 
-searchInput.addEventListener('keyup', displayInputs);
+function displayMatches() {
+  // console.log(this.value);
+  const matchArray = findMatches(this.value, cities);
+  // console.log(matchArray)
+  const html = matchArray.map(place => {
+    // here we highlightes the word what was searched
+    const regex = new RegExp(this.value, 'gi');
+    const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+    const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+    return `
+      <li>
+        <span class="name">${cityName}, ${stateName}</span>
+        <span class="population">${place.population}</span>
+      </li>
+    `;
+  }).join('');
+  suggestions.innerHTML = html;
+}
+
+const searchInput = document.querySelector('input.search');
+const suggestions = document.querySelector('ul.suggestions');
+
+searchInput.addEventListener('change', displayMatches);
+searchInput.addEventListener('keyup', displayMatches);
 </script>
 </body>
 </html>
